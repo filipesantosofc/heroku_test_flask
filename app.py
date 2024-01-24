@@ -3,7 +3,9 @@ from gradio_client import Client
 
 app = Flask(__name__)
 
-@app.route('/run', methods=['POST'])
+BASE_URL = "https://squaadai-sd-xl.hf.space/--replicas/268up/file="
+
+@app.route('/run', methods=['GET'])
 def run_model():
     # Obter parâmetros da consulta da URL
     prompt = request.args.get('prompt', default='')
@@ -34,7 +36,10 @@ def run_model():
         api_name="/run"
     )
 
-    return jsonify(result)
+    # Concatenar a URL base com o resultado
+    full_url = BASE_URL + result['output']  # Substitua 'output' pelo nome do campo desejado no resultado
+
+    return jsonify({'full_url': full_url, 'result': result})
 
 if __name__ == '__main__':
     app.run(debug=True)
