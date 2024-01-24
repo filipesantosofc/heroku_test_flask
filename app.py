@@ -23,7 +23,7 @@ def run_model():
     apply_refiner = request.args.get('apply_refiner', type=bool, default=True)
 
     # Chamar a API Gradio
-    client = Client("https://squaadai-sd-xl.hf.space/--replicas/yl24o/")
+    client = Client("https://squaadai-sd-xl.hf.space/--replicas/268up/")
     result = client.predict(
         prompt, negative_prompt, prompt_2, negative_prompt_2,
         use_negative_prompt, use_prompt_2, use_negative_prompt_2,
