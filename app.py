@@ -6,6 +6,7 @@ app = Flask(__name__)
 @app.route('/run', methods=['GET'])
 def run_model():
     # Obter parâmetros da consulta da URL
+    endpoint = request.args.get('endpoint', default='https://squaadai-sd-xl.hf.space/--replicas/wj9nq/')
     prompt = request.args.get('prompt', default='')
     negative_prompt = request.args.get('negative_prompt', default='')
     prompt_2 = request.args.get('prompt_2', default='')
@@ -23,7 +24,7 @@ def run_model():
     apply_refiner = request.args.get('apply_refiner', type=bool, default=True)
 
     # Chamar a API Gradio
-    client = Client("https://squaadai-sd-xl.hf.space/--replicas/67020/")
+    client = Client(endpoint)
     result = client.predict(
         prompt, negative_prompt, prompt_2, negative_prompt_2,
         use_negative_prompt, use_prompt_2, use_negative_prompt_2,
