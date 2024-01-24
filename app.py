@@ -3,7 +3,7 @@ from gradio_client import Client
 
 app = Flask(__name__)
 
-@app.route('/run', methods=['GET'])
+@app.route('/run', methods=['POST'])
 def run_model():
     # Obter parâmetros da consulta da URL
     prompt = request.args.get('prompt', default='')
