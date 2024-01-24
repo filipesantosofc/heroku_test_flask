@@ -3,9 +3,7 @@ from gradio_client import Client
 
 app = Flask(__name__)
 
-BASE_URL = "https://squaadai-sd-xl.hf.space/--replicas/268up/file="
-
-@app.route('/run', methods=['GET'])
+@app.route('/run', methods=['POST'])
 def run_model():
     # Obter parâmetros da consulta da URL
     prompt = request.args.get('prompt', default='')
@@ -25,7 +23,7 @@ def run_model():
     apply_refiner = request.args.get('apply_refiner', type=bool, default=True)
 
     # Chamar a API Gradio
-    client = Client("https://squaadai-sd-xl.hf.space/--replicas/268up/")
+    client = Client("https://squaadai-sd-xl.hf.space/--replicas/yl24o/")
     result = client.predict(
         prompt, negative_prompt, prompt_2, negative_prompt_2,
         use_negative_prompt, use_prompt_2, use_negative_prompt_2,
@@ -36,10 +34,7 @@ def run_model():
         api_name="/run"
     )
 
-    # Concatenar a URL base com o resultado
-    full_url = BASE_URL + result['output']  # Substitua 'output' pelo nome do campo desejado no resultado
-
-    return jsonify({'full_url': full_url, 'result': result})
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True)
