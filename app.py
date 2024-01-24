@@ -1,29 +1,23 @@
 from flask import Flask, request, jsonify
 from gradio_client import Client
+import requests
+import os
 
 app = Flask(__name__)
 
+# Função para salvar a imagem no serviço de armazenamento
+def save_image_to_api(image_path):
+    api_url = "https://wosocial.bubbleapps.io/version-test/api/1.1/wf/save"
+    files = {'file': open(image_path, 'rb')}
+    response = requests.get(api_url, params={'file': image_path}, files=files)
+    return response.json().get('url', '')
+
 @app.route('/run', methods=['GET'])
 def run_model():
-    # Obter parâmetros da consulta da URL
-    prompt = request.args.get('prompt', default='')
-    negative_prompt = request.args.get('negative_prompt', default='')
-    prompt_2 = request.args.get('prompt_2', default='')
-    negative_prompt_2 = request.args.get('negative_prompt_2', default='')
-    use_negative_prompt = request.args.get('use_negative_prompt', type=bool, default=True)
-    use_prompt_2 = request.args.get('use_prompt_2', type=bool, default=True)
-    use_negative_prompt_2 = request.args.get('use_negative_prompt_2', type=bool, default=True)
-    seed = request.args.get('seed', type=int, default=0)
-    width = request.args.get('width', type=int, default=256)
-    height = request.args.get('height', type=int, default=256)
-    guidance_scale_base = request.args.get('guidance_scale_base', type=float, default=1.0)
-    guidance_scale_refiner = request.args.get('guidance_scale_refiner', type=float, default=1.0)
-    num_inference_steps_base = request.args.get('num_inference_steps_base', type=int, default=10)
-    num_inference_steps_refiner = request.args.get('num_inference_steps_refiner', type=int, default=10)
-    apply_refiner = request.args.get('apply_refiner', type=bool, default=True)
+    # ... (código anterior para obter parâmetros)
 
-    # Chamar a API Gradio
-    client = Client("https://squaadai-sd-xl.hf.space/--replicas/268up/")
+    # Chamar a API Gradio e salvar a imagem localmente
+    client = Client("https://squaadai-sd-xl.hf.space/--replicas/yl24o/")
     result = client.predict(
         prompt, negative_prompt, prompt_2, negative_prompt_2,
         use_negative_prompt, use_prompt_2, use_negative_prompt_2,
@@ -34,7 +28,15 @@ def run_model():
         api_name="/run"
     )
 
-    return jsonify(result)
+    # Salvar a imagem localmente
+    image_path = "/tmp/gradio/output_image.png"
+    result['image'].save(image_path)
+
+    # Chamar a API para salvar a imagem e obter a URL
+    saved_image_url = save_image_to_api(image_path)
+
+    # Retornar a URL da imagem
+    return jsonify({"saved_image_url": saved_image_url})
 
 if __name__ == '__main__':
     app.run(debug=True)
