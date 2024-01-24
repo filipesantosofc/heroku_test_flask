@@ -15,7 +15,7 @@ def predict():
         # Adicione mais parâmetros conforme necessário
 
         # Fazer a previsão usando o Gradio
-        client = Client("https://squaadai-sd-xl.hf.space/--replicas/yl24o/")
+        client = Client("https://squaadai-sd-xl.hf.space/--replicas/yl24o/run/predict")
         result = client.predict(prompt, negative_prompt)
 
         # Retornar o resultado como JSON
