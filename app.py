@@ -37,24 +37,37 @@ def run_model():
 
     return jsonify(result)
 
-@app.route('/run_faceswap', methods=['GET'])
-def run_faceswap():
-    # Obter parâmetros da consulta da URL
-    endpoint_faceswap = request.args.get('endpoint_faceswap', default='https://felixrosberg-face-swap.hf.space/--replicas/cv6b7/')
-    target_image = request.args.get('target_image', default='')
-    source_image = request.args.get('source_image', default='')
-    anonymization_ratio = request.args.get('anonymization_ratio', type=float, default=100)
-    adversarial_defense_ratio = request.args.get('adversarial_defense_ratio', type=float, default=10)
-    mode = request.args.get('mode', default=[""])
+@app.route('/faceswapper', methods=['GET'])
+def faceswapper():
+    # Lógica para a segunda API (faceswapper)
+    endpoint = request.args.get('endpoint', default='https://pierroromeu-faceswapper.hf.space/--replicas/eom4d/')
+    user_photo = request.args.get('user_photo', default='')
+    result_photo = request.args.get('result_photo', default='')
+    name = request.args.get('name', default='')
 
-    # Chamar a API Gradio para o segundo modelo (faceswap)
-    client_faceswap = Client(endpoint_faceswap)
-    result_faceswap = client_faceswap.predict(
-        target_image, source_image, anonymization_ratio, adversarial_defense_ratio, mode,
-        api_name="/run_inference"
+    client = Client(endpoint)
+    result = client.predict(
+        user_photo, result_photo, name,
+        api_name="/faceswapper"
     )
 
-    return jsonify(result_faceswap)
+    return jsonify(result)
+
+@app.route('/face_enhancer', methods=['GET'])
+def face_enhancer():
+    # Lógica para a terceira API (face_enhancer)
+    endpoint = request.args.get('endpoint', default='https://pierroromeu-gfpgan.hf.space/')
+    input_image = request.args.get('input_image', default='')
+    version = request.args.get('version', default='v1.4')
+    rescaling_factor = request.args.get('rescaling_factor', type=float, default=1)
+
+    client = Client(endpoint)
+    result = client.predict(
+        input_image, version, rescaling_factor,
+        api_name="/predict"
+    )
+
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True)
