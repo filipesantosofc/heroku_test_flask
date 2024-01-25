@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route('/run', methods=['GET'])
 def run_model():
     # Obter parâmetros da consulta da URL
-    endpoint = request.args.get('endpoint', default='https://squaadai-sd-xl.hf.space/--replicas/wj9nq/')
+    endpoint = request.args.get('endpoint', default='https://squaadai-sd-xl.hf.space/--replicas/yl24o/')
     prompt = request.args.get('prompt', default='')
     negative_prompt = request.args.get('negative_prompt', default='')
     prompt_2 = request.args.get('prompt_2', default='')
@@ -23,7 +23,7 @@ def run_model():
     num_inference_steps_refiner = request.args.get('num_inference_steps_refiner', type=int, default=10)
     apply_refiner = request.args.get('apply_refiner', type=bool, default=True)
 
-    # Chamar a API Gradio
+    # Chamar a API Gradio para o primeiro modelo
     client = Client(endpoint)
     result = client.predict(
         prompt, negative_prompt, prompt_2, negative_prompt_2,
@@ -36,6 +36,25 @@ def run_model():
     )
 
     return jsonify(result)
+
+@app.route('/run_faceswap', methods=['GET'])
+def run_faceswap():
+    # Obter parâmetros da consulta da URL
+    endpoint_faceswap = request.args.get('endpoint_faceswap', default='https://felixrosberg-face-swap.hf.space/--replicas/cv6b7/')
+    target_image = request.args.get('target_image', default='')
+    source_image = request.args.get('source_image', default='')
+    anonymization_ratio = request.args.get('anonymization_ratio', type=float, default=100)
+    adversarial_defense_ratio = request.args.get('adversarial_defense_ratio', type=float, default=10)
+    mode = request.args.get('mode', default=[""])
+
+    # Chamar a API Gradio para o segundo modelo (faceswap)
+    client_faceswap = Client(endpoint_faceswap)
+    result_faceswap = client_faceswap.predict(
+        target_image, source_image, anonymization_ratio, adversarial_defense_ratio, mode,
+        api_name="/run_inference"
+    )
+
+    return jsonify(result_faceswap)
 
 if __name__ == '__main__':
     app.run(debug=True)
