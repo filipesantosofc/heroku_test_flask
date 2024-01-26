@@ -7,6 +7,9 @@ app = Flask(__name__)
 def run_model():
     # Obter parâmetros da consulta da URL
     endpoint = request.args.get('endpoint', default='https://squaadai-sd-xl.hf.space/--replicas/yl24o/')
+    hf_token = request.args.get('hf_token', default='')
+
+    # Restante dos parâmetros específicos para a primeira API
     prompt = request.args.get('prompt', default='')
     negative_prompt = request.args.get('negative_prompt', default='')
     prompt_2 = request.args.get('prompt_2', default='')
@@ -23,8 +26,8 @@ def run_model():
     num_inference_steps_refiner = request.args.get('num_inference_steps_refiner', type=int, default=10)
     apply_refiner = request.args.get('apply_refiner', type=bool, default=True)
 
-    # Chamar a API Gradio para o primeiro modelo
-    client = Client(endpoint)
+    # Chamar a API Gradio
+    client = Client(endpoint, hf_token=hf_token)
     result = client.predict(
         prompt, negative_prompt, prompt_2, negative_prompt_2,
         use_negative_prompt, use_prompt_2, use_negative_prompt_2,
@@ -37,33 +40,21 @@ def run_model():
 
     return jsonify(result)
 
-@app.route('/faceswapper', methods=['GET'])
-def faceswapper():
-    # Lógica para a segunda API (faceswapper)
-    endpoint = request.args.get('endpoint', default='https://pierroromeu-faceswapper.hf.space/--replicas/eom4d/')
-    user_photo = request.args.get('user_photo', default='')
-    result_photo = request.args.get('result_photo', default='')
-    name = request.args.get('name', default='')
+@app.route('/predict', methods=['GET'])
+def predict_model():
+    # Obter parâmetros da consulta da URL
+    endpoint = request.args.get('endpoint', default='https://pierroromeu-roopfaceswapr.hf.space/')
+    hf_token = request.args.get('hf_token', default='')
 
-    client = Client(endpoint)
+    # Restante dos parâmetros específicos para a segunda API
+    source_file = request.args.get('source_file', default='')
+    target_file = request.args.get('target_file', default='')
+    face_enhancer = request.args.get('face_enhancer', type=bool, default=True)
+
+    # Chamar a API Gradio
+    client = Client(endpoint, hf_token=hf_token)
     result = client.predict(
-        user_photo, result_photo, name,
-        api_name="/faceswapper"
-    )
-
-    return jsonify(result)
-
-@app.route('/face_enhancer', methods=['GET'])
-def face_enhancer():
-    # Lógica para a terceira API (face_enhancer)
-    endpoint = request.args.get('endpoint', default='https://pierroromeu-gfpgan.hf.space/')
-    input_image = request.args.get('input_image', default='')
-    version = request.args.get('version', default='v1.4')
-    rescaling_factor = request.args.get('rescaling_factor', type=float, default=1)
-
-    client = Client(endpoint)
-    result = client.predict(
-        input_image, version, rescaling_factor,
+        source_file, target_file, face_enhancer,
         api_name="/predict"
     )
 
