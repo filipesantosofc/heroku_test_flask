@@ -44,7 +44,7 @@ def run_model():
 def predict_gan():
     # Obter parâmetros da consulta da URL
     endpoint = request.args.get('endpoint', default='https://pierroromeu-gfpgan.hf.space/--replicas/dgwcd/')
-    hf_token = request.args.get('hf_token', default='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')
+    hf_token = request.args.get('hf_token', default='')
     filepath = request.args.get('filepath', default='')
     version = request.args.get('version', default='v1.4')
     rescaling_factor = request.args.get('rescaling_factor', type=float, default=2.0)
@@ -64,7 +64,7 @@ def predict_gan():
 def faceswapper():
     # Obter parâmetros da consulta da URL
     endpoint = request.args.get('endpoint', default='https://pierroromeu-faceswapper.hf.space/--replicas/u42x7/')
-    hf_token = request.args.get('hf_token', default='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')
+    hf_token = request.args.get('hf_token', default='')
     user_photo = request.args.get('user_photo', default='')
     result_photo = request.args.get('result_photo', default='')
     name_for_saving = request.args.get('name_for_saving', default='')
