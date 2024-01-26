@@ -41,21 +41,41 @@ def run_model():
     return jsonify(result)
 
 @app.route('/predict', methods=['GET'])
-def predict_model():
+def predict_gan():
     # Obter parâmetros da consulta da URL
-    endpoint = request.args.get('endpoint', default='https://pierroromeu-roopfaceswapr.hf.space/')
-    hf_token = request.args.get('hf_token', default='')
-
-    # Restante dos parâmetros específicos para a segunda API
-    source_file = request.args.get('source_file', default='')
-    target_file = request.args.get('target_file', default='')
-    face_enhancer = request.args.get('face_enhancer', type=bool, default=True)
+    endpoint = request.args.get('endpoint', default='https://pierroromeu-gfpgan.hf.space/--replicas/dgwcd/')
+    hf_token = request.args.get('hf_token', default='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')
+    filepath = request.args.get('filepath', default='')
+    version = request.args.get('version', default='v1.4')
+    rescaling_factor = request.args.get('rescaling_factor', type=float, default=2.0)
 
     # Chamar a API Gradio
     client = Client(endpoint, hf_token=hf_token)
     result = client.predict(
-        source_file, target_file, face_enhancer,
+        filepath,
+        version,
+        rescaling_factor,
         api_name="/predict"
+    )
+
+    return jsonify(result)
+
+@app.route('/faceswapper', methods=['GET'])
+def faceswapper():
+    # Obter parâmetros da consulta da URL
+    endpoint = request.args.get('endpoint', default='https://pierroromeu-faceswapper.hf.space/--replicas/u42x7/')
+    hf_token = request.args.get('hf_token', default='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')
+    user_photo = request.args.get('user_photo', default='')
+    result_photo = request.args.get('result_photo', default='')
+    name_for_saving = request.args.get('name_for_saving', default='')
+
+    # Chamar a API Gradio
+    client = Client(endpoint, hf_token=hf_token)
+    result = client.predict(
+        user_photo,
+        result_photo,
+        name_for_saving,
+        api_name="/faceswapper"
     )
 
     return jsonify(result)
