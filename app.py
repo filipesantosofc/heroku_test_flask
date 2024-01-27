@@ -3,10 +3,6 @@ from gradio_client import Client
 
 app = Flask(__name__)
 
-# run.py
-if __name__ == "__main__":
-    app.run()
-
 @app.route('/run', methods=['GET'])
 def run_model():
     # Obter parâmetros da consulta da URL
@@ -83,3 +79,7 @@ def faceswapper():
     )
 
     return jsonify(result)
+
+# run.py
+if __name__ == "__main__":
+    app.run()
